@@ -1,6 +1,5 @@
 const {Schema,model}= require('mongoose') 
-const bcrypt = require('bcrypt');
-const { defaultImagePath } = require('../secret');
+const bcrypt = require('bcryptjs');
 
 const userSchema= new Schema ({
 
@@ -36,13 +35,15 @@ const userSchema= new Schema ({
     },
 
     image:{
-        type:String,
-        default:defaultImagePath
-    },
+        type:Buffer,
+        contentType:String,
+        required:[true,'user image is required'],
+     },
     
     address:{
         type:String,
         required:[true,'user address is required'],
+        minlength:[3,'user address can be minimun 3 characters'],
     } ,
 
     phone:{

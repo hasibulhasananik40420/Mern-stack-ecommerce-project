@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+const cookieParser = require('cookie-parser')
 const morgan = require('morgan')
 const bodyParser= require('body-parser')
 const createError = require('http-errors')
@@ -8,6 +9,7 @@ const rateLimit = require('express-rate-limit')
 const userRouter = require('./routers/userRouter')
 const seedRouter = require('./routers/seedRouter')
 const { errorResponse } = require('./controllers/responseController')
+const authRouter = require('./routers/authRouter')
 
 
 const limiter = rateLimit({
@@ -18,7 +20,7 @@ const limiter = rateLimit({
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 })
 
-
+app.use(cookieParser())
 app.use(xssClean())
 app.use(bodyParser.json())
 app.use(morgan("dev"))
@@ -27,6 +29,7 @@ app.use(limiter)
 
 //user router
 app.use('/api/users',userRouter)
+app.use('/api/auth',authRouter)
 app.use('/api/seed',seedRouter)
 
 
