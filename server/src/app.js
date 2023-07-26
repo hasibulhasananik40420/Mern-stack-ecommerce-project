@@ -7,14 +7,14 @@ const createError = require('http-errors')
 const xssClean = require('xss-clean')
 const rateLimit = require('express-rate-limit')
 const userRouter = require('./routers/userRouter')
-const seedRouter = require('./routers/seedRouter')
 const { errorResponse } = require('./controllers/responseController')
 const authRouter = require('./routers/authRouter')
+const seedRouter = require('./routers/seedRouter')
 
 
 const limiter = rateLimit({
 	windowMs: 1 * 60 * 1000, // 1 minutes
-	max: 5, // Limit each IP to 100 requests per `window` (here, per 5 minutes)
+	max: 10, // Limit each IP to 100 requests per `window` (here, per 5 minutes)
   message:"to many request . try again",
 	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
@@ -31,7 +31,6 @@ app.use(limiter)
 app.use('/api/users',userRouter)
 app.use('/api/auth',authRouter)
 app.use('/api/seed',seedRouter)
-
 
 
 

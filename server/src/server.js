@@ -1,5 +1,6 @@
 const app = require('./app')
 const connectDatabase = require('./config/db')
+const logger = require('./controllers/loggerController')
 const { port } = require('./secret')
 
 
@@ -7,7 +8,7 @@ const { port } = require('./secret')
 
 
 app.listen(port, async() => {
-  console.log(`Example app listening on port ${port}`)
+  logger.log('info',`server are running on port ${port}`)
  await connectDatabase()
 })
 

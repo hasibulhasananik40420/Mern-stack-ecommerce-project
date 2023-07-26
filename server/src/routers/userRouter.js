@@ -1,20 +1,46 @@
-const express = require('express') 
-const {getUser, getSingleUserById, deleteSingleUserById, processRegister, activateUserAccount, updateUserById} = require('../controllers/userController')
-const upload = require('../middlewares/uploadFile')
-const validateUserRegistation = require('../validators/auth')
-const runValidation = require('../validators')
-const userRouter= express.Router()
+const express = require("express");
+const {
+  getUser,
+  getSingleUserById,
+  deleteSingleUserById,
+  processRegister,
+  activateUserAccount,
+  updateUserById,
+  handleBanUserById,
+  handleUnbanUserById,
+  handleUpdatePassword,
+  handleForgetPassword,
+  handleResetPassword,
+} = require("../controllers/userController");
+const {validateUserRegistation, validateUserPasswordUpdate, validateForgetPassword, validateResetPassword} = require('../validators/auth')
+const upload = require("../middlewares/uploadFile");
+const runValidation = require("../validators");
+const { isLoggedIn, isLoggedOut, isAdmin } = require("../middlewares/auth");
+const userRouter = express.Router();
 
-userRouter.post('/process-register',
-upload.single("image") ,
-validateUserRegistation,
-runValidation,
-processRegister ) //validateUserRegistation,upload,runValidation are middleware
-userRouter.post('/activate',activateUserAccount )
-userRouter.get('/',getUser)
-userRouter.get('/:id',getSingleUserById)
-userRouter.delete('/:id',deleteSingleUserById)
-userRouter.put('/:id',upload.single("image"), updateUserById)
+userRouter.post(
+  "/process-register",
+  upload.single("image"),
+  isLoggedOut,
+  validateUserRegistation,
+  runValidation,
+  processRegister
+); //validateUserRegistation,upload,runValidation are middleware
+userRouter.post("/activate",isLoggedOut, activateUserAccount);
+userRouter.get("/", isLoggedIn,isAdmin, getUser);
+userRouter.get("/:id([0-9a-fA-F]{24})", isLoggedIn, getSingleUserById);
+userRouter.delete("/:id([0-9a-fA-F]{24})",isLoggedIn, deleteSingleUserById);
+//reset password
+userRouter.put("/reset-password",validateResetPassword,runValidation, handleResetPassword);
+userRouter.put("/:id([0-9a-fA-F]{24})", upload.single("image"),isLoggedIn, updateUserById);
+userRouter.put("/ban-user/:id([0-9a-fA-F]{24})",isLoggedIn, isAdmin, handleBanUserById);
+userRouter.put("/unban-user/:id([0-9a-fA-F]{24})",isLoggedIn, isAdmin, handleUnbanUserById);
+//update password
+userRouter.put("/update-password/:id([0-9a-fA-F]{24})",validateUserPasswordUpdate,runValidation, isLoggedIn, handleUpdatePassword);
+
+//forget password
+userRouter.post("/forget-password",validateForgetPassword,runValidation, handleForgetPassword);
 
 
-module.exports = userRouter
+module.exports = userRouter;
+
