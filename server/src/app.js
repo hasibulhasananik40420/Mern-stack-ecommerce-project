@@ -10,6 +10,8 @@ const userRouter = require('./routers/userRouter')
 const { errorResponse } = require('./controllers/responseController')
 const authRouter = require('./routers/authRouter')
 const seedRouter = require('./routers/seedRouter')
+const categoryRouter = require('./routers/categoryRoute')
+const productRouter = require('./routers/productRouter')
 
 
 const limiter = rateLimit({
@@ -31,6 +33,8 @@ app.use(limiter)
 app.use('/api/users',userRouter)
 app.use('/api/auth',authRouter)
 app.use('/api/seed',seedRouter)
+app.use('/api/categories',categoryRouter)
+app.use('/api/products',productRouter)
 
 
 
